@@ -1,39 +1,65 @@
 import time
-import logging
-from multiprocessing import Pool, cpu_count
 
-# sync
-def s_factorize(numbers: list):
+def factorize(*numbers):
     result = []
-    for num in numbers:
-        factors = []
-        for i in range(1, num + 1):
-            if num % i == 0:
-                factors.append(i)
-        result.append(factors)
+    for item in numbers:
+        temp_list = []
+        for i in range(1, item + 1):
+            if item % i == 0:
+                temp_list.append(i)
+        result.append(temp_list)
     return result
 
-# input = [1000, 10000, 100000, 1000000, 1000000000]
-input = [10, 10, 10, 10, 10]
+def test_factorize():
+    a, b, c, d = factorize(128, 255, 99999, 10651060)
+    
+    assert a == [1, 2, 4, 8, 16, 32, 64, 128]
+    assert b == [1, 3, 5, 15, 17, 51, 85, 255]
+    assert c == [1, 3, 9, 41, 123, 271, 369, 813, 2439, 11111, 33333, 99999]
+    assert d == [1, 2, 4, 5, 7, 10, 14, 20, 28, 35, 70, 140, 76079, 152158, 304316, 380395, 532553, 760790, 1065106, 1521580, 2130212, 2662765, 5325530, 10651060]
+
+    
 start_time = time.time()
-s_result = s_factorize(input)
+test_factorize()
 end_time = time.time()
-s_execution_time = end_time - start_time
-logging.basicConfig(level=logging.DEBUG, format="%(asctime)s %(name)s %(message)s")
-logging.debug(f"Synchronous execution: {s_execution_time} sec")
+print(end_time - start_time)
 
-print('\n\n')
 
-# parallel
-def parallel_factorize(numbers):
-    with Pool(cpu_count()) as pool:
-        result = pool.map(s_factorize, numbers)
-    return result
+# import multiprocessing
+# import time
 
-# input = [1000, 10000, 100000, 1000000, 1000000000]
-input = [10, 10, 10, 10, 10]
-start_time = time.time()
-result_parallel = parallel_factorize(input)
-end_time = time.time()
-parallel_execution_time = end_time - start_time
-print(f"Parallel execution: {parallel_execution_time} sec")
+# def factorize_worker(number, output):
+#     factors = []
+#     for i in range(1, number + 1):
+#         if number % i == 0:
+#             factors.append(i)
+#     output.put(factors)
+
+# def factorize_parallel(numbers):
+#     processes = []
+#     results = multiprocessing.Queue()
+
+#     for number in numbers:
+#         process = multiprocessing.Process(target=factorize_worker, args=(number, results))
+#         processes.append(process)
+#         process.start()
+
+#     for process in processes:
+#         process.join()
+
+#     return [results.get() for _ in numbers]
+
+# def test_factorize_parallel():
+    
+#     a, b, c, d  = factorize_parallel((128, 255, 99999, 10651060))
+
+#     assert a == [1, 2, 4, 8, 16, 32, 64, 128]
+#     assert b == [1, 3, 5, 15, 17, 51, 85, 255]
+#     assert c == [1, 3, 9, 41, 123, 271, 369, 813, 2439, 11111, 33333, 99999]
+#     assert d == [1, 2, 4, 5, 7, 10, 14, 20, 28, 35, 70, 140, 76079, 152158, 304316, 380395, 532553, 760790, 1065106, 1521580, 2130212, 2662765, 5325530, 10651060]
+
+# if __name__ == "__main__":
+#     start_time = time.time()
+#     test_factorize_parallel()
+#     end_time = time.time()
+#     print(end_time - start_time)
